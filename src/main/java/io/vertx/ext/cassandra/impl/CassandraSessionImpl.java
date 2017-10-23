@@ -13,6 +13,8 @@ import java.util.Map;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.ext.cassandra.CQLRowStream;
 import io.vertx.ext.cassandra.CassandraSession;
 
 /**
@@ -122,6 +124,16 @@ public class CassandraSessionImpl implements CassandraSession {
       @Override
       public void onFailure(Throwable t) {
         handler.handle(Future.failedFuture(t));
+      }
+    });
+    return this;
+  }
+
+  @Override
+  public CassandraSession queryStream(Statement statement, Handler<AsyncResult<CQLRowStream>> handler) {
+    execute(statement, event -> {
+      if (event.succeeded()) {
+        handler.handle(Future.succeededFuture(new CQLRowStreamImpl(Vertx.currentContext(), event.result())));
       }
     });
     return this;
