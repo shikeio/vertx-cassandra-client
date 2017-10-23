@@ -37,5 +37,8 @@ public interface CassandraSession {
   @Fluent
   CassandraSession prepare(RegularStatement statement, Handler<AsyncResult<PreparedStatement>> handler);
 
+  @Fluent
+  CassandraSession queryStream(Statement statement, Handler<AsyncResult<CQLRowStream>> handler);
+
   void close(Handler<AsyncResult<Void>> handler);
 }
